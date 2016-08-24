@@ -71,9 +71,12 @@ int main(int argc, char** argv)
     return -1;
   }
 
-  int count = 0;
   while(std::getline(ifs, line))
   {
+    auto lastToken = line.find_last_of(",");
+    if(line.find(uid1, lastToken) == std::string::npos && line.find(uid2, lastToken) == std::string::npos)
+      continue;
+
     std::vector<std::string> v;
     Tokenize(line, v, ",");
     if(v.size() != 5)
@@ -86,19 +89,16 @@ int main(int argc, char** argv)
     const std::string& floor = v[3];
     if(uid == uid1)
     {
-      uid1Locs.insert(std::make_pair(Key(timestamp, floor), Position(atof(v[2].c_str()), atof(v[3].c_str()))));
+      uid1Locs.insert(std::make_pair(Key(timestamp, floor), Position(atof(v[1].c_str()), atof(v[2].c_str()))));
     }
     else if(uid == uid2)
     {
-      uid2Locs.insert(std::make_pair(Key(timestamp, floor), Position(atof(v[2].c_str()), atof(v[3].c_str()))));
+      uid2Locs.insert(std::make_pair(Key(timestamp, floor), Position(atof(v[1].c_str()), atof(v[2].c_str()))));
     }
-    ++count;
   }
 
-  std::cout << count  << " records read" << std::endl;
-
   const TimeLocationMap& smaller = uid1Locs.size() < uid2Locs.size() ? uid1Locs : uid2Locs;
-  const TimeLocationMap& larger = uid1Locs.size() >= uid2Locs.size() ? uid2Locs : uid1Locs;
+  const TimeLocationMap& larger = uid1Locs.size() < uid2Locs.size() ? uid2Locs : uid1Locs;
 
   for(const auto& s : smaller)
   {
