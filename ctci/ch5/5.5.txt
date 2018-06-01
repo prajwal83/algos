@@ -1,0 +1,5 @@
+if (n & (n - 1) == 0) --> ?
+
+Ans: it checked if 
+1. n is zero
+2. n has only 1 bit set => n is a power of 2
