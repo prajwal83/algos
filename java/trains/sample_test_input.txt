@@ -1,0 +1,26 @@
+#graph definition
+Graph: AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7
+
+#distance queries
+distance of A B C
+
+distance of A D
+
+distance of A D C
+
+distance of A E B C D
+
+distance of A E D
+
+#trip count query based on stops
+trip count from C to C with stops <= 3
+
+trip count from A to C with stops = 4
+
+#shortest path queries
+shortest path from A to C
+
+shortest path from B to B
+
+#trip count query based on distance
+trip count from C to C with distance < 30
