@@ -1,14 +1,14 @@
 package multithreading;
 
 import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class LockFreeLinkedListTest {
+class LockFreeLinkedListTest {
     private class Producer extends Thread {
         private final int start;
         private final int end;
