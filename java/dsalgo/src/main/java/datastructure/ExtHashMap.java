@@ -14,7 +14,7 @@ public class ExtHashMap<K, V> {
 
     //previous/old hash-table upon extending current
     private Object[] oldTable;
-    //keeps tracke of the bucket index of old hash-table from where we want to copy/move an element to current hash-table
+    //keeps track of the bucket index of old hash-table from where we want to copy/move an element to current hash-table
     private int oldTableMoveIndex = 0;
 
     public ExtHashMap() {
