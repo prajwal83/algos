@@ -35,7 +35,7 @@ public class ExtHashMap<K, V> {
             node.value = value;
             return;
         }
-        putToCurrentTable(key, value);
+        putToCurrentTable(key, value, true);
         copyFromOldTable();
     }
 
@@ -88,13 +88,13 @@ public class ExtHashMap<K, V> {
                 oldTableMoveIndex = 0;
             }
             if(nodeToMove != null)
-                putToCurrentTable(nodeToMove.key, nodeToMove.value);
+                putToCurrentTable(nodeToMove.key, nodeToMove.value, true);
         }
     }
 
     //put an element to current table
     //extend current table if we all buckets are filled but don't copy elements yet (lazy expansion)
-    private void putToCurrentTable(K key, V value) {
+    private void putToCurrentTable(K key, V value, final boolean allowExpansion) {
         final int i = indexForCurrent(key);
 
         ValueNode cur = (ValueNode)currentTable[i];
@@ -115,24 +115,36 @@ public class ExtHashMap<K, V> {
         cur.next = newNode;
 
         //extend if we have reached capacity but don't copy elements yet
-        if(filledBucketCount == currentTable.length) {
-            Object[] newTable = new Object[currentTable.length * 2];
-
+        if(allowExpansion && filledBucketCount == currentTable.length) {
+            copyAllFromOld();
             oldTable = currentTable;
             oldTableMoveIndex = 0;
 
-            currentTable = newTable;
+            currentTable = new Object[currentTable.length * 2];;
             filledBucketCount = 0;
         }
     }
 
+    private void copyAllFromOld() {
+        if(oldTable != null) {
+            for(int i = oldTableMoveIndex; i < oldTable.length; ++i) {
+                ValueNode nodeToMove = ((ValueNode)oldTable[i]).next;
+                while(nodeToMove != null) {
+                    putToCurrentTable(nodeToMove.key, nodeToMove.value, false);
+                    nodeToMove = nodeToMove.next;
+                }
+            }
+            oldTable = null;
+            oldTableMoveIndex = 0;
+        }
+    }
     private int indexForCurrent(K key) {
-        return key.hashCode() % currentTable.length;
+        return Math.abs(key.hashCode()) % currentTable.length;
     }
 
     private int indexForOld(K key) {
         if(oldTable == null)
             return -1;
-        return key.hashCode() % oldTable.length;
+        return Math.abs(key.hashCode()) % oldTable.length;
     }
 }
