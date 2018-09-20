@@ -29,6 +29,12 @@ public class ExtHashMap<K, V> {
     //-> insert new elements to current table
     //-> move one element from old hash-table to current hash-table if old table exists
     public void put(K key, V value) {
+        ValueNode node = getValueNode(key);
+        //overwrite
+        if(node != null) {
+            node.value = value;
+            return;
+        }
         putToCurrentTable(key, value);
         copyFromOldTable();
     }
@@ -36,22 +42,29 @@ public class ExtHashMap<K, V> {
     //try get from current table
     //if not found in current table then try get from old table if it exists
     public V get(K key) {
-        V value = getFromNode(key, ((ValueNode)currentTable[indexForCurrent(key)]));
-        if(value == null) {
+        ValueNode node = getValueNode(key);
+        if(node == null)
+            return null;
+        return node.value;
+    }
+
+    private ValueNode getValueNode(K key) {
+        ValueNode node = getFromBucket(key, ((ValueNode)currentTable[indexForCurrent(key)]));
+        if(node == null) {
             final int oldIndex = indexForOld(key);
             if(oldIndex >= oldTableMoveIndex)
-                value = getFromNode(key, ((ValueNode)oldTable[oldIndex]));
+                node = getFromBucket(key, ((ValueNode)oldTable[oldIndex]));
         }
-        return value;
+        return node;
     }
 
     //get from a given ValueNode singly linked list
-    private V getFromNode(K key, ValueNode head) {
+    private ValueNode getFromBucket(K key, ValueNode head) {
         if(head != null) {
             ValueNode curNode = head.next;
             while (curNode != null) {
                 if (curNode.key.equals(key))
-                    return curNode.value;
+                    return curNode;
                 curNode = curNode.next;
             }
         }

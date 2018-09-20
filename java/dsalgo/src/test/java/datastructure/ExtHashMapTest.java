@@ -24,7 +24,28 @@ class ExtHashMapTest {
     }
 
     @Test
-    void putAndGetLargeSize() {
+    void putAndGetWithDuplicates() {
+        ExtHashMap<Integer, Integer> extHashMap = new ExtHashMap<>();
+        final int maxElements = 100000;
+
+        for(int i = 0; i < maxElements; ++i) {
+            extHashMap.put(i, i + 1);
+            //duplicate key every 20th element with different value
+            if(i > 0 && i % 20 == 0)
+                extHashMap.put(i, i + 33);
+        }
+
+        //verify all elements at the end
+        for(int i = 0; i < maxElements; ++i) {
+            if(i > 0 && i % 20 == 0)
+                assertEquals(i + 33, (int) extHashMap.get(i));
+            else
+                assertEquals(i + 1, (int) extHashMap.get(i));
+        }
+    }
+
+    @Test
+    void putAndGetLargeSizeMeasureTime() {
         ExtHashMap<Integer, Integer> extHashMap = new ExtHashMap<>();
         final int maxElements = 4000000; //4 MM
 
